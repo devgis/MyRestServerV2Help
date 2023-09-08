@@ -2,6 +2,10 @@
 
 > Help for MyRestServerV2 Docker 
 
+## 说明
+
+> 此版本与之前版本已经有了本质的区别，为全新架构设计，并且使用了.net 6技术，因此得以兼容Docker 和 Linux。 但秉承了一贯轻量，简单易用的原则。并且拥有比旧版更多的功能。目前更多的功能依然正在不断完善之中。
+
 ## 获取镜像
 
 > docker pull devgis/myrestserverv2
