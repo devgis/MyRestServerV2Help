@@ -1,0 +1,6 @@
+POST https://localhost:7176/api/execute/sp_test1 HTTP/1.1
+content-type:application/json
+
+{
+    "Parameter":{"id":11,"name":"testadd22","remarks":"nn"}
+}

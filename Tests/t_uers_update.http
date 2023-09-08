@@ -1,0 +1,7 @@
+POST https://localhost:7176/api/t_test/update HTTP/1.1
+content-type:application/json
+
+{
+    "Parameter":{"name":"testadd991","remarks":"添加的991"},
+    "Condition":{"id":991}
+}

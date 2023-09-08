@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  webapp:
+    image: myrestserverv2
+    network_mode: "host"
+    privileged: true
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:7011;http://+:7001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=147258369
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/server.pfx
+    volumes:
+      - {localconfigpath}/appsettings.json:/app/appsettings.json:ro
+      - {localconfigpath}/nlog.config:/app/nlog.config:ro
+      - {localconfigpath}/server.pfx:/app/server.pfx:ro
+      - {locallogpath}:/app/logs

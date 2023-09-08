@@ -1,0 +1,6 @@
+POST https://localhost:7176/api/t_test/delete HTTP/1.1
+content-type:application/json
+
+{
+    "Condition":{"id":10}
+}
