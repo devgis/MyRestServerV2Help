@@ -96,7 +96,7 @@ services:
     "AllowExecuteProcedures":true //允许执行存储过程
   },
   "ConnectionStrings": {
-    "WebApiDatabase": "server=localhost;port=33306;database=test_db;user=root;password=123456;SslMode=None" 为数据库连接字符串配置
+    "WebApiDatabase": "server=localhost;port=33306;database=test_db;user=root;password=123456;SslMode=None;allowPublicKeyRetrieval=true;" 为数据库连接字符串配置
   },
 
 ```
