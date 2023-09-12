@@ -105,6 +105,137 @@ services:
 
 > > 具体参考网络上关于nlog的配置
 
+### appsettings.json
+
+```
+{
+  "AllowedHosts": "*",
+  "DEVGIS":{
+    "DBType":"MYSQL", //数据库类型 Access "OLEDB","ACCESS"， SQLServer : "MSSQL","MSSQLSERVER","SQLSERVER" MYSQL:"MYSQL" Oracle:"ORACLE" Postgresql:"POSTGRESQL","POSTGRES" 如果不能识别则认为是Access数据库
+    "Tables":["t_test","t_role"],//手动配置开放的表，如果此项为空则使用数据库检索
+    "FilterTables":["t_user","t_sys"],//需要过滤的表
+    "Views":["v_test","v_null"], //视图
+    "Procedures":["sp_test1","sp_test2"], //视图
+    "Addable":true, //允许添加数据
+    "Updateable":true, //允许修改
+    "DeleteAble":true, //允许删除
+    "AllowExecuteProcedures":true //允许执行存储过程
+  },
+  "ConnectionStrings": {
+    "WebApiDatabase": "server=localhost;port=33306;database=test_db;user=root;password=123456;SslMode=None;allowPublicKeyRetrieval=true;"
+  },
+  "Jwt": {
+    "SecretKey": "test@test.com_____________________", 
+    "Issuer": "WebAppIssuer",
+    "Audience": "WebAppAudience"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "System": "Warning",
+      "Microsoft": "Warning",
+      "Microsoft.AspNetCore": "Warning",
+      "Hangfire": "Warning"
+    },
+    "NLog": {
+      "IncludeScopes": true //true启用nlog  ，false 禁用
+    }
+  }
+}
+
+```
+
+### nlog.config
+
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.nlog-project.org/schemas/NLog.xsd NLog.xsd"
+      autoReload="true"
+      throwExceptions="false"
+      internalLogLevel="Off" internalLogFile="logs/nlog-internal.log">
+<!--${basedir}/logs-->
+  <variable name="logDirectory" value="logs"/>
+  <variable name="traceVal" value="${date:format=HH\:mm\:ss} [Thread-${threadname:whenEmpty=${threadid}}]|${message}"/>
+  <variable name="layoutVal" value="${date:format=HH\:mm\:ss} [Thread-${threadname:whenEmpty=${threadid}}]|${uppercase:${level}}|${callsite:fileName=True}${newline}${message}${newline}${exception}"/>
+  <variable name="consoleVal" value="${date:format=HH\:mm\:ss}|${pad:padding=5:inner=${level:uppercase=true}}|${message}"/>
+
+  <targets>
+    <target name="console" xsi:type="ColoredConsole" useDefaultRowHighlightingRules="false"
+            layout="${consoleVal}" >
+      <highlight-row condition="level == LogLevel.Debug" foregroundColor="DarkGray" />
+      <highlight-row condition="level == LogLevel.Info" foregroundColor="Gray" />
+      <highlight-row condition="level == LogLevel.Warn" foregroundColor="Yellow" />
+      <highlight-row condition="level == LogLevel.Error" foregroundColor="Red" />
+      <highlight-row condition="level == LogLevel.Fatal" foregroundColor="Red" backgroundColor="White" />
+    </target>
+
+    <target xsi:type="File"
+      name="logfile"
+      fileName="${logDirectory}/info_${shortdate}.log"
+      keepFileOpen="false"
+      layout="${layoutVal}" />
+    <target xsi:type="File"
+      name="warnfile"
+      fileName="${logDirectory}/warn_${shortdate}.log"
+      keepFileOpen="false"
+      layout="${layoutVal}" />
+    <target xsi:type="File"
+      name="errfile"
+      fileName="${logDirectory}/error_${shortdate}.log"
+      keepFileOpen="false"
+      layout="${layoutVal}" />
+    <target xsi:type="File"
+      name="debugfile"
+      fileName="${logDirectory}/debug_${shortdate}.log"
+      keepFileOpen="false"
+      layout="${layoutVal}" />
+    <target xsi:type="File"
+            name="tracefile"
+            fileName="${logDirectory}/trace_${shortdate}.log"
+            keepFileOpen="false"
+            layout="${traceVal}" />
+  </targets>
+
+  <rules>
+    <logger name="*" writeTo="console" />
+    <logger name="*" level="Trace" writeTo="tracefile"/>
+    <logger name="*" level="Error" writeTo="errfile" />
+    <logger name="*" level="Warn" writeTo="warnfile"/>
+    <logger name="*" minlevel="Info" writeTo="logfile"/>
+    <logger name="*" minlevel="Debug" writeTo="debugfile" />
+  </rules>
+</nlog>
+```
+
+### appsettings.Development.json 这个文件暂时应该作用不大。
+
+```
+{
+  "DetailedErrors": true,
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
+```
+
+## server.pfx 证书的生成 
+
+> 证书正常情况是找CA购买，但是本质上咱们自己生成的证书也能用，但是会被浏览器不识别。当然使用上是没有任何问题的，这里是Linux 下利用openssl生成证书的过程，windows下应该会更简单一些。这里只介绍ubuntu22下证书的生成。需要自己先安装Openssl。
+
+> openssl genrsa -des3 -out server.key 2048
+
+> openssl req -new -x509 -key server.key -out server.crt -days 18250
+
+> openssl pkcs12 -export -out server.pfx -inkey server.key -in server.crt
+
+> pass exportpassword 147258369 这里导出密钥就是我们在上面docker-compose.yml中或者docker命令启动环境中ASPNETCORE_Kestrel__Certificates__Default__Password=147258369中对应的密码。
+
+
 ## 接口说明(数据表) GET 方式
 
 > /api/v 查看系统版本信息
