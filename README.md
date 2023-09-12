@@ -290,7 +290,11 @@ services:
 
 ## 增删改部分  全部为POST方式
 
-> add
+> api/{tablename}/add 
+
+> > 示例地址 :https://localhost:7176/api/t_test/add
+
+> > 示例参数(post content)：
 
 ```
 {
@@ -298,7 +302,11 @@ services:
 }
 ```
 
-> apit/{tablename}/update 
+> api/{tablename}/update 
+
+> > 示例地址 :https://localhost:7176/api/t_test/update
+
+> > 示例参数(post content)：
 
 ```
 {
@@ -307,7 +315,11 @@ services:
 }
 ```
 
-> apit/{tablename}/delete
+> api/{tablename}/delete
+
+> > 示例地址 :https://localhost:7176/api/t_test/delete
+
+> > 示例参数(post content)：
 
 ```
 content-type:application/json
@@ -318,6 +330,10 @@ content-type:application/json
 ```
  
 > api/execute/{procedurename}
+
+> > 示例地址 :https://localhost:7176/api/execute/test_proc
+
+> > 示例参数(post content)：
 
 ```
 {
